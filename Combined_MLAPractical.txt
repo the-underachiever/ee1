@@ -1,0 +1,243 @@
+1.LeastSquareMethod********************************************
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('/content/salary.csv')
+data.head()
+
+plt.scatter(data['exp'],data['salary'])
+
+X = data['exp'].values
+Y = data['salary'].values
+
+mean_x = np.mean(X)
+mean_y = np.mean(Y)
+
+n = len(X)
+print('mean_x= ',mean_x,'mean_y= ', mean_y, 'n= ',n)
+
+num = 0
+denom = 0
+for i in range(n):
+    num += (X[i] - mean_x) * (Y[i] - mean_y)
+    denom += (X[i] - mean_x) ** 2
+m = num / denom
+c = mean_y - (m * mean_x)
+
+print("Coefficients")
+print('m= ',m, 'c= ', c)
+
+maxx_x = np.max(X) + 10
+minn_x = np.min(X) - 10
+
+x = np.linspace(minn_x, maxx_x, 1000)
+y = c + m * x
+
+
+plt.plot(x, y, color='#58b970', label='Regression Line')
+plt.scatter(X, Y, c='#ef5423', label='Scatter Plot')
+plt.xlabel('Experience')
+plt.ylabel('Salary')
+plt.legend()
+plt.show()
+
+2.naive Bayes***************************************************
+from sklearn.datasets import load_iris
+iris = load_iris()
+iris
+
+X = iris.data
+y = iris.target
+X
+
+y
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+gnb.fit(X_train, y_train)
+
+y_pred = gnb.predict(X_test)
+y_pred
+
+from sklearn import metrics
+print("Gaussian Naive Bayes model accuracy(in %):", metrics.accuracy_score(y_test, y_pred)*100)
+
+print("Gaussian Naive Bayes model Precision(in %):", metrics.precision_score(y_test, y_pred, average='micro')*100)
+
+3KNN*************************************************
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+irisData = load_iris()
+irisData
+
+X = irisData.data
+y = irisData.target
+X
+
+y
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+
+y_pred=knn.predict(X_test)
+y_pred
+
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_test, y_pred)
+
+print('Accuracy:', accuracy)
+
+4 Var1***********************************************************
+import pandas as pd
+data=pd.read_csv('/content/data1.csv')
+data
+
+import matplotlib.pyplot as plt
+plt.scatter(data['VAR1'],data['VAR2'])
+plt.xlabel('VAR1')
+plt.ylabel('VAR2')
+plt.show()
+
+x=pd.DataFrame(data[['VAR1','VAR2']])
+x
+
+from sklearn.cluster import KMeans
+KMeans(n_clusters=3)
+km=KMeans(3)
+km.fit(x)
+
+clusters=km.fit_predict(x)
+clusters
+
+data_with_output=data.copy()
+data_with_output
+
+data_with_output['Cluster']=clusters
+data_with_output
+
+plt.scatter(data_with_output['VAR1'], data_with_output['VAR2'],c=data_with_output['Cluster'], cmap='rainbow' )
+
+datanew=[[0.906,0.606],[1.23,0.98],[0.234,0.432]]
+datanew
+
+df1=pd.DataFrame(datanew,columns=['NewVar1','NewVar2'])
+df1
+
+km.fit(df1)
+
+cnew=km.fit_predict(df1)
+cnew
+
+5linear Regerssion GPA************************************
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+data=pd.read_csv('/content/sat_gpa.csv')
+data
+
+data['SAT']
+
+data.describe()
+
+y=data['GPA'] # Dependent Variable
+x1=data['SAT'] # Independent Variable
+plt.scatter(x1,y)
+plt.xlabel('SAT Data')
+plt.ylabel('GPA Data')
+plt.show()
+
+x=sm.add_constant(x1)
+results=sm.OLS(y,x).fit()
+results.summary()
+
+plt.scatter(x1,y)
+yhat=0.0017 * x1 + 0.2750
+plt.plot(x1,yhat)
+plt.xlabel('SAT')
+plt.ylabel('GPA')
+
+GPA= 0.2750 + 0.0017 * 1700
+GPA
+
+6k-meanClustering*********************************************************
+import pandas as pd
+data = pd.read_csv('/content/countries.csv')
+data
+
+import matplotlib.pyplot as plt
+plt.scatter(data['Latitude'],data['Longitude'])
+plt.ylabel('Longitude')
+plt.xlabel('Lattitude')
+
+x = pd.DataFrame(data[['Latitude','Longitude']])
+x
+
+from sklearn.cluster import KMeans
+km=KMeans(3)
+km.fit(x)
+
+clusters = km.fit_predict(x)
+clusters
+
+data_with_output=data.copy()
+data_with_output
+
+data_with_output['Cluster']=clusters
+data_with_output
+
+plt.scatter(data_with_output['Latitude'],data_with_output['Longitude'],c = data_with_output['Cluster'],cmap ='rainbow')
+
+7HierarchicalClustering**************************************************
+import numpy as np
+import matplotlib.pyplot as plt
+x = [4, 5, 10, 4, 3, 11, 14 , 6, 10, 12]
+y = [21, 19, 24, 17, 16, 25, 24, 22, 21, 21]
+plt.scatter(x, y)
+plt.show()
+
+from scipy.cluster.hierarchy import dendrogram, linkage
+data = list(zip(x, y))
+print(data)
+
+linkage_data = linkage(data, method='ward', metric='euclidean')
+dendrogram(linkage_data)
+plt.show
+
+from sklearn.cluster import AgglomerativeClustering
+hierarchical_cluster = AgglomerativeClustering(n_clusters=2, affinity='euclidean', linkage='ward')
+labels = hierarchical_cluster.fit_predict(data)
+plt.scatter(x, y, c=labels)
+plt.show()
+
+8  SVM   ******************************************************************
+import numpy as np
+import pandas as pd
+from sklearn import svm
+iris = pd.read_csv('/content/iris (1).csv')
+iris
+
+X = iris.iloc[:, :-1]
+X
+
+y = iris.iloc[:, -1]
+y
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+clf = svm.SVC(kernel='rbf')
+clf.fit(X_train, y_train)
+
+y_pred = clf.predict(X_test)
+y_pred
+
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_test, y_pred)
+print('Accuracy:', accuracy)
